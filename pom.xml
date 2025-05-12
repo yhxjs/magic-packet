@@ -60,6 +60,12 @@
             <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.13</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!--参数校验-->
         <dependency>
@@ -86,13 +92,6 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.49.1.0</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <!--druid-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.2.15</version>
         </dependency>
 
         <!--jna-->
