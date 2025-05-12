@@ -22,6 +22,10 @@ public class Config implements Serializable {
 
     String ip;
 
+    Integer mask;
+
+    Integer port;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     Date crtDt;
 

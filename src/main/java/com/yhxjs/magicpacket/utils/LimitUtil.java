@@ -28,40 +28,9 @@ public class LimitUtil {
     @Resource
     private ThreadPoolExecutor defaultExecutor;
 
-    private static final ConcurrentMap<String, Long> SEND_LIMIT_LIST = new ConcurrentHashMap<>();
-
-    private static final long SEND_INTERVAL = 60 * 1000L;
-
     private static final int ILLEGAL_LIMIT_COUNT = 5;
 
     private static final int LOGIN_LIMIT_TIME = 10 * 60 * 1000;
-
-    public static String getSendStatus(HttpServletRequest req, String key, Long sendTime) {
-        String ip = getIpAddr(req);
-        if (SEND_LIMIT_LIST.get(key) != null || SEND_LIMIT_LIST.get(ip) != null) {
-            if (SEND_LIMIT_LIST.get(ip) != null) {
-                if (sendTime - SEND_LIMIT_LIST.get(ip) <= SEND_INTERVAL) {
-                    return "limit";
-                }
-                SEND_LIMIT_LIST.put(key, System.currentTimeMillis());
-                SEND_LIMIT_LIST.put(ip, System.currentTimeMillis());
-                return "allow";
-            }
-            if (SEND_LIMIT_LIST.get(key) != null) {
-                if (sendTime - SEND_LIMIT_LIST.get(key) <= SEND_INTERVAL) {
-                    return "limit";
-                }
-                SEND_LIMIT_LIST.put(key, System.currentTimeMillis());
-                SEND_LIMIT_LIST.put(ip, System.currentTimeMillis());
-                return "allow";
-            }
-        } else {
-            SEND_LIMIT_LIST.put(key, System.currentTimeMillis());
-            SEND_LIMIT_LIST.put(ip, System.currentTimeMillis());
-            return "new";
-        }
-        return "false";
-    }
 
     public static String getIpAddr(HttpServletRequest request) {
         final String unknownIP = "unknown";
@@ -105,12 +74,6 @@ public class LimitUtil {
     protected void startClearOverDue() {
         defaultExecutor.execute(() -> {
             long nowTime = System.currentTimeMillis();
-            long expireSendTime = nowTime - SEND_INTERVAL * 10;
-            for (Map.Entry<String, Long> limitEntry : SEND_LIMIT_LIST.entrySet()) {
-                if (limitEntry.getValue() < expireSendTime) {
-                    SEND_LIMIT_LIST.remove(limitEntry.getKey());
-                }
-            }
             for (Map.Entry<String, IllegalLimitIP> loginLimitIPEntry : LOGIN_LIMIT_IP_MAP.entrySet()) {
                 if (nowTime - loginLimitIPEntry.getValue().getLastTime() > LOGIN_LIMIT_TIME) {
                     LOGIN_LIMIT_IP_MAP.remove(loginLimitIPEntry.getKey());

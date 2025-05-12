@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class MacValidator implements ConstraintValidator<MAC, String> {
 
-    public static final Pattern MAC_PATTERN = Pattern.compile("[A-F0-9]{2}(-[A-F0-9]{2}){5}");
+    public static final Pattern MAC_PATTERN = Pattern.compile("[A-F0-9]{2}(-[A-F0-9]{2}){5}|[A-F0-9]{2}(:[A-F0-9]{2}){5}");
 
     @Override
     public void initialize(MAC constraintAnnotation) { // do nothing

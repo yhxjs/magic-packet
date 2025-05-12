@@ -2,7 +2,7 @@ package com.yhxjs.magicpacket.controller;
 
 public class Code {
 
-    public static final Integer OK = 1;
+    public static final Integer OK = 100;
     public static final Integer FAIL = 0;
     //登录状态码
     public static final Integer LOGIN_SUCCESS = 201;

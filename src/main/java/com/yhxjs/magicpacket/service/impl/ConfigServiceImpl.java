@@ -16,14 +16,10 @@ import java.util.Date;
 @Service
 public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> implements ConfigService {
 
-
     @Override
     public void add(ConfigBo bo) {
         Config config = new Config();
-        config.setName(bo.getName());
-        config.setDesc(bo.getDesc());
-        config.setMac(bo.getMac());
-        config.setIp(bo.getIp());
+        copyToConfig(bo, config);
         config.setCrtDt(new Date());
         this.save(config);
     }
@@ -32,10 +28,7 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
     public void update(ConfigBo bo) {
         Config config = new Config();
         config.setId(bo.getId());
-        config.setName(bo.getName());
-        config.setDesc(bo.getDesc());
-        config.setMac(bo.getMac());
-        config.setIp(bo.getIp());
+        copyToConfig(bo, config);
         config.setUpdDt(new Date());
         this.updateById(config);
     }
@@ -58,5 +51,14 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
         Page<Config> configPage = new Page<>(page, size);
         pageVo.setRows(this.list(configPage, queryWrapper));
         return pageVo;
+    }
+
+    private void copyToConfig(ConfigBo bo, Config config) {
+        config.setName(bo.getName());
+        config.setDesc(bo.getDesc());
+        config.setMac(bo.getMac().replace(":", "-"));
+        config.setIp(bo.getIp());
+        config.setMask(bo.getMask());
+        config.setPort(bo.getPort());
     }
 }
