@@ -4,6 +4,14 @@ spring:
   datasource:
     url: jdbc:sqlite:./db/magic-packet.db
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 2
+      idle-timeout: 600000
+      max-lifetime: 900000
+      connection-timeout: 2000
+      validation-timeout: 10000
+      connection-test-query: SELECT 1 FROM sqlite_master
   redis:
     database: 0
     host: localhost
