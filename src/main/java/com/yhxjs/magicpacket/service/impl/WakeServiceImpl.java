@@ -1,15 +1,23 @@
 package com.yhxjs.magicpacket.service.impl;
 
+import com.sun.jna.Platform;
+import com.yhxjs.magicpacket.service.CLibrary;
 import com.yhxjs.magicpacket.service.WakeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.*;
 
 @Slf4j
 @Service
 public class WakeServiceImpl implements WakeService {
+
+    private static final int IPPROTO_IP = 0;
+    private static final int IP_MTU_DISCOVER = 10;
+    private static final int IP_PMTUDISC_DO = 2;
+    private static final int IP_DONTFRAGMENT = 14;
 
     @Override
     public void send(String ip, Integer mask, String mac, Integer port) throws IOException {
@@ -32,7 +40,7 @@ public class WakeServiceImpl implements WakeService {
         InetAddress address = InetAddress.getByName(ipAddress);
         DatagramPacket packet = new DatagramPacket(magicPacket, magicPacket.length, address, port);
         try (DatagramSocket socket = new DatagramSocket()) {
-            socket.setOption(StandardSocketOptions.IP_TOS, 0x40);
+            setDontFragment(socket);
             socket.send(packet);
             log.info("已发送幻包到{} via {}:{}", macAddress, ipAddress, port);
         }
@@ -95,5 +103,69 @@ public class WakeServiceImpl implements WakeService {
 
     private String formatIpAddress(int[] ipBytes) {
         return ipBytes[0] + "." + ipBytes[1] + "." + ipBytes[2] + "." + ipBytes[3];
+    }
+
+    private  void setDontFragment(DatagramSocket socket) {
+        int fd = getFileDescriptor(socket);
+        if (fd == -1) {
+            return;
+        }
+        if (Platform.isLinux()) {
+            byte[] val = { (byte) IP_PMTUDISC_DO };
+            CLibrary.INSTANCE.setsockopt(fd, IPPROTO_IP, IP_MTU_DISCOVER, val, val.length);
+        } else if (Platform.isWindows()) {
+            int[] val = { 1 };
+            CLibrary.INSTANCE.setsockopt(fd, IPPROTO_IP, IP_DONTFRAGMENT, val, val.length);
+        }
+    }
+
+    public int getFileDescriptor(DatagramSocket socket) {
+        try {
+            Object delegate = getSocketDelegate(socket);
+            if (delegate == null) {
+                return -1;
+            }
+            Field dcField = findField(delegate.getClass(), "dc");
+            if (dcField == null) {
+                return -1;
+            }
+            Object fileDescriptor = dcField.get(delegate);
+            Field descField = findField(fileDescriptor.getClass(), "fd");
+            if (descField == null) {
+                return -1;
+            }
+            Object fd = descField.get(fileDescriptor);
+            Field fdField = findField(fd.getClass(), "fd");
+            return fdField != null ? fdField.getInt(fd) : -1;
+        } catch (Exception e) {
+            log.error("获取文件描述符失败", e);
+            return -1;
+        }
+    }
+
+    private Object getSocketDelegate(DatagramSocket socket) {
+        try {
+            Field implField = findField(socket.getClass(), "impl");
+            if (implField != null) {
+                return implField.get(socket);
+            }
+            Field delegateField = findField(socket.getClass(), "delegate");
+            return delegateField != null ? delegateField.get(socket) : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Field findField(Class<?> clazz, String fieldName) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            if (clazz.getSuperclass() != null) {
+                return findField(clazz.getSuperclass(), fieldName);
+            }
+            return null;
+        }
     }
 }

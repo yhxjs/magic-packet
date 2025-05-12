@@ -2,7 +2,7 @@ spring:
   application:
     name: springbootStart
   datasource:
-    url: jdbc:sqlite:D:\magic-packet.db
+    url: jdbc:sqlite:./db/magic-packet.db
     driver-class-name: org.sqlite.JDBC
     druid:
       initial-size: 5
@@ -71,8 +71,6 @@ mybatis-plus:
     db-config:
       insert-strategy: not_null
       update-strategy: not_null
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
   port: 8081
   servlet:
