@@ -1,6 +1,6 @@
 package com.yhxjs.magicpacket.validation.validator;
 
-import org.apache.commons.lang3.StringUtils;
+import com.yhxjs.magicpacket.utils.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
