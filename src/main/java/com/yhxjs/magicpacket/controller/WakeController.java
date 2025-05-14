@@ -35,6 +35,7 @@ public class WakeController {
         }
         try {
             wakeService.send(config.getIp(), config.getMask(), config.getMac(), config.getPort());
+            configService.updateLastSendTime(config.getId());
         } catch (IOException e) {
             return Result.error(Code.SYSTEM_ERROR, "发送失败，请稍后再试");
         }

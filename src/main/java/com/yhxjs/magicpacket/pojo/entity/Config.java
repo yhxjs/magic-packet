@@ -31,4 +31,7 @@ public class Config implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     Date updDt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    Date lastSendTime;
 }

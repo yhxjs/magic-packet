@@ -14,4 +14,6 @@ public interface ConfigService extends IService<Config> {
     void delete(Integer id);
 
     PageVo pageQuery(Integer page, Integer size);
+
+    void updateLastSendTime(Integer id);
 }

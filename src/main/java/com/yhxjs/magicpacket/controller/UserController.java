@@ -69,6 +69,12 @@ public class UserController {
         return Result.error(Code.CODE_FAIL, "验证码错误！");
     }
 
+    @PostMapping("/")
+    public Result info() {
+        User user = jwtUtil.getUser();
+        return Result.querySuccess(user);
+    }
+
     @PostMapping("/getSalt")
     public Result getSalt(HttpServletRequest req, @RequestParam String password) {
         String sessionId = jwtUtil.getSessionId(req);

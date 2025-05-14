@@ -53,6 +53,14 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
         return pageVo;
     }
 
+    @Override
+    public void updateLastSendTime(Integer id) {
+        Config config = new Config();
+        config.setId(id);
+        config.setLastSendTime(new Date());
+        this.updateById(config);
+    }
+
     private void copyToConfig(ConfigBo bo, Config config) {
         config.setName(bo.getName());
         config.setDesc(bo.getDesc());
