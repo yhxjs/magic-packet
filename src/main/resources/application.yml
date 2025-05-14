@@ -4,50 +4,14 @@ spring:
   datasource:
     url: jdbc:sqlite:./db/magic-packet.db
     driver-class-name: org.sqlite.JDBC
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-      time-between-eviction-runs-millis: 200
-      min-evictable-idle-time-millis: 600000
-      max-evictable-idle-time-millis: 900000
-      validation-query: SELECT 1 FROM sqlite_master
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      filters: slf4j,wall,stat
-      filter:
-        slf4j:
-          enabled: true
-          statement-log-error-enabled: true
-          statement-create-after-log-enabled: false
-          statement-close-after-log-enabled: false
-          result-set-open-after-log-enabled: false
-          result-set-close-after-log-enabled: false
-        wall:
-          enabled: true
-          config:
-            create-table-allow: false
-            drop-table-allow: false
-        stat:
-          enabled: true
-          db-type: mysql
-          log-slow-sql: true
-          slow-sql-millis: 2000
-          merge-sql: true
-      web-stat-filter:
-        enabled: true
-        url-pattern: "/*"
-        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
-        session-stat-enable: false
-      stat-view-servlet:
-        enabled: false
-      socket-timeout: 30000
-      connect-timeout: 2000
-      keep-alive: true
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 2
+      idle-timeout: 600000
+      max-lifetime: 900000
+      connection-timeout: 2000
+      validation-timeout: 10000
+      connection-test-query: SELECT 1 FROM sqlite_master
   redis:
     database: 0
     host: localhost
