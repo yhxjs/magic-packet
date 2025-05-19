@@ -69,6 +69,13 @@ public class UserController {
         return Result.error(Code.CODE_FAIL, "验证码错误！");
     }
 
+    @PostMapping("/logout")
+    public Result logout() {
+        int userId = jwtUtil.getUserId();
+        redisService.delete(RedisKeyConstants.USER_INFO + userId);
+        return Result.success(Code.OK, "退出成功！");
+    }
+
     @PostMapping("/")
     public Result info() {
         User user = jwtUtil.getUser();
