@@ -1,3 +1,7 @@
+<div align="center" width="100%">
+    <img src="./magic-packet.png" width="150" />
+</div>
+
 # Magic Packet
 
 这是一个用于发送幻包（Wake-on-LAN Magic Packet）的后端服务，使用 Java 编写，可以配合 Web 界面 [magic-packet-ui](https://github.com/yhxjs/magic-packet-ui) 一起食用。
